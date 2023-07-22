@@ -1,14 +1,15 @@
 version: '3'
 services:
-  db:
-    image:  mysql:latest
-    ports:
-      - "8080:8080"
+  postgres:
+    image:  postgres:latest
     environment:
-      - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
-      - "MYSQL_USER=${DB_USER}"
-      - "MYSQL_PASSWORD=${DB_PASSWORD}"
-      - "MYSQL_DATABASE=${DB_NAME}"   
+      - "POSTGRES_USER=${DB_USER}"
+      - "POSTGRES_PASSWORD=${DB_PASSWORD}"
+      - "PGDATA: /data/postgres"
+    volumes:
+       - postgres-db:/data/postgres
+    ports:
+      - "5432:5432" 
   web:
     build: .
     ports:
