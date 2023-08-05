@@ -2,11 +2,13 @@ package service
 
 import (
 	InforLog "Golang/log/infor"
+	"Golang/usecase"
 	"fmt"
 	"net/http"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -38,10 +40,27 @@ func Run() {
 	if err != nil {
 		panic(err)
 	}
-	gormdb.Start(gormDb)
+	db := gormdb.NewGormDb()
+	db.Start(gormDb)
+	userRepository := gormdb.NewUser()
+	referrance := usecase.NewReferrance(userRepository)
+	interactor := usecase.NewInteractor(db, referrance)
+
+	api := commonhandler{
+		Interactor: &interactor,
+	}
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{"*"},
+	}))
+
+	e.POST("/login", AppV1Login(api))
+	e.POST("/register", AppV1Register(api))
 	g := e.Group("/api")
-	g.POST("/login", nil)
-	e.GET("/swageer/*", echoSwagger.WrapHandler)
+	g.POST("/logout", AppV1Logout(api))
+	g.POST("/addinformation", AppV1Logout(api))
+	g.POST("/editinformation", AppV1Logout(api))
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.Logger.Fatal(e.Start(":" + config.Getconfig().Port))
 
 }

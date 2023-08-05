@@ -8,11 +8,19 @@ definitions:
     type: object
   model.RegisterUser:
     properties:
-      Password:
-        type: string
-      UserID:
+      createdTime:
         type: string
       email:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      status:
+        type: string
+      updatedTime:
+        type: string
+      userName:
         type: string
     type: object
   model.Token:
@@ -33,38 +41,7 @@ info:
   title: Swagger Example API
   version: "1.0"
 paths:
-  /gormdb/adduser:
-    post:
-      consumes:
-      - application/json
-      description: Add new user to database
-      parameters:
-      - description: Authorizationc
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: model.RegisterUser
-        in: body
-        name: token
-        required: true
-        schema:
-          $ref: '#/definitions/model.RegisterUser'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-      summary: AddUser
-      tags:
-      - gormDB
-  /gormdb/login:
+  /api/login:
     post:
       consumes:
       - application/json
@@ -90,32 +67,7 @@ paths:
       summary: LoginUser
       tags:
       - gormDB
-  /gormdb/user:
-    get:
-      consumes:
-      - application/json
-      description: get username from token
-      parameters:
-      - description: Authorization
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-      summary: GetUser
-      tags:
-      - gormDB
-  /logout:
+  /api/logout:
     get:
       consumes:
       - application/json
@@ -157,4 +109,55 @@ paths:
       summary: GetLogout
       tags:
       - MonggoDB
+  /api/register:
+    post:
+      consumes:
+      - application/json
+      description: Add new user to database
+      parameters:
+      - description: model.RegisterUser
+        in: body
+        name: token
+        required: true
+        schema:
+          $ref: '#/definitions/model.RegisterUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: AddUser
+      tags:
+      - gormDB
+  /gormdb/user:
+    get:
+      consumes:
+      - application/json
+      description: get username from token
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: GetUser
+      tags:
+      - gormDB
 swagger: "2.0"

@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "Golang/docs"
 	InforLog "Golang/log/infor"
 	service "Golang/service"
 	"fmt"

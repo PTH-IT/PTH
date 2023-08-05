@@ -1,13 +1,10 @@
 version: '3'
 services:
-  postgres:
+  db:
     image:  postgres:latest
     environment:
       - "POSTGRES_USER=${DB_USER}"
       - "POSTGRES_PASSWORD=${DB_PASSWORD}"
-      - "PGDATA: /data/postgres"
-    volumes:
-       - postgres-db:/data/postgres
     ports:
       - "5432:5432" 
   web:
@@ -32,8 +29,8 @@ services:
       - "127.0.0.1:4566:4566"            # LocalStack Gateway
       - "127.0.0.1:4510-4559:4510-4559"  # external services port range
     environment:
-      - DEBUG=${DEBUG-}
-      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
+      - DEBUG=${DEBUG:-default_value}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR:-default_value}
       - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"

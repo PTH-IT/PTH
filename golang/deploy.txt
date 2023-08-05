@@ -1,0 +1,5 @@
+
+linux 
+cp ./golang_app /etc/systemd/system/
+systemctl enable golang_app
+systemctl start golang_app

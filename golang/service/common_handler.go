@@ -10,10 +10,24 @@ type commonhandler struct {
 	Interactor *usecase.Interactor
 }
 
-func AppV1GetUsers(api commonhandler) echo.HandlerFunc {
+func AppV1Login(api commonhandler) echo.HandlerFunc {
 
 	return func(context echo.Context) error {
-		return api.Interactor.GetUser(context)
+		return api.Interactor.Login(context)
+	}
+
+}
+func AppV1Register(api commonhandler) echo.HandlerFunc {
+
+	return func(context echo.Context) error {
+		return api.Interactor.Register(context)
+	}
+
+}
+func AppV1Logout(api commonhandler) echo.HandlerFunc {
+
+	return func(context echo.Context) error {
+		return api.Interactor.Logout(context)
 	}
 
 }

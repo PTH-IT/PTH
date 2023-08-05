@@ -9,8 +9,8 @@ import (
 )
 
 type Reference interface {
-	GetUserGormdb(userId string, password string) (*model.User, error)
-	AddtUserGormdb(userId string, password string) error
+	GetUser(userName string, password string) (*model.User, error)
+	AddUser(userName string, password string, email string) (*model.User, error)
 	UpdateConnectionID(userId string, connectionid string) error
 	GetConnectionID(userId string) (*model.GetUser, error)
 }
@@ -27,15 +27,15 @@ type reference struct {
 	userRepository repository.UserRepository
 }
 
-func (r reference) GetUserGormdb(userId string, password string) (*model.User, error) {
+func (r reference) GetUser(userId string, password string) (*model.User, error) {
 
 	user, err := r.userRepository.GetUser(userId, password)
 	return user, err
 }
-func (r reference) AddtUserGormdb(userId string, password string) error {
+func (r reference) AddUser(userName string, password string, email string) (*model.User, error) {
 
-	err := r.userRepository.AddUser(userId, password)
-	return err
+	user, err := r.userRepository.AddUser(userName, password, email)
+	return user, err
 }
 func (r reference) GetConnectionID(userId string) (*model.GetUser, error) {
 	InforLog.PrintLog(fmt.Sprintf("r.mongoRepository.GetUser call"))

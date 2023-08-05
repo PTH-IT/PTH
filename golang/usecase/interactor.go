@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	gormdb "Golang/adapter/gormdb"
+	"Golang/adapter/gormdb"
 	"Golang/domain/model"
+	modelR "Golang/model"
 	"Golang/utils"
 
 	InforLog "Golang/log/infor"
@@ -15,19 +16,19 @@ import (
 )
 
 func NewInteractor(
-	// gormDb *gorm.DB,
+	db gormdb.GormDb,
 	referrance Reference,
 
 ) Interactor {
 
 	return Interactor{
-		// gormDb,
+		db,
 		referrance,
 	}
 }
 
 type Interactor struct {
-	// gormDb     *gorm.DB
+	db         gormdb.GormDb
 	referrance Reference
 }
 
@@ -40,8 +41,8 @@ type Interactor struct {
 // @Param user body  model.Login true "model.Login"
 // @Success 201 {object} model.Token
 // @Failure 400 {object} string
-// @Router /gormdb/login [post]
-func (i *Interactor) LoginUserGormdb(context echo.Context) error {
+// @Router /login [post]
+func (i *Interactor) Login(context echo.Context) error {
 	InforLog.PrintLog(fmt.Sprintf("LoginUserGormdb start"))
 
 	var user model.Login
@@ -50,7 +51,8 @@ func (i *Interactor) LoginUserGormdb(context echo.Context) error {
 		return context.String(http.StatusBadRequest, "no user")
 	}
 
-	result, err := i.referrance.GetUserGormdb(user.UserID, *utils.CryptPassword(user.Password))
+	result, err := i.referrance.GetUser(user.UserName, *utils.CryptPassword(user.Pa
+		ssword))
 	if err != nil {
 		return err
 	}
@@ -58,12 +60,12 @@ func (i *Interactor) LoginUserGormdb(context echo.Context) error {
 		return context.String(http.StatusBadRequest, "user no exist")
 	}
 
-	tokenString := utils.GenerateToken(result.UserID)
-	token := &model.Token{
+	tokenString := utils.GenerateToken(result.UserName)
+	token := &modelR.Token{
 		Authorization: tokenString,
 		Type:          "bearer",
 	}
-	err = utils.SetToken(tokenString, user.UserID)
+	err = utils.SetToken(tokenString, user.UserName)
 	if err != nil {
 		return err
 	}
@@ -100,50 +102,59 @@ func (i *Interactor) GetUser(context echo.Context) error {
 // @Tags gormDB
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Authorizationc"
 // @Param token body model.RegisterUser true "model.RegisterUser"
 // @Success 200 {object} string
 // @Failure 400 {object} string
-// @Router /gormdb/adduser [post]
-func (i *Interactor) AddUserGormdb(context echo.Context) error {
+// @Router /register [post]
+func (i *Interactor) Register(context echo.Context) error {
 	InforLog.PrintLog(fmt.Sprintf("AddUserGormdb start"))
-
-	authercations := context.Request().Header.Get("Authorization")
-	user := utils.ParseToken(authercations)
-	userID := user.Claims.(jwt.MapClaims)["userID"].(string)
-	if !utils.GetToken(authercations, userID) {
-		return context.String(http.StatusForbidden, "Authorization awrong")
-	}
-
-	var Adduser model.RegisterUser
+	var Adduser *model.RegisterUser
 	err := context.Bind(&Adduser)
 
 	if err != nil {
 		return context.String(http.StatusBadRequest, "no user")
 	}
-	if userID == Adduser.UserID {
-		return context.String(http.StatusBadRequest, "user exists")
-	}
+	InforLog.PrintLog(fmt.Sprintf("utils.CryptPassword call function"))
+
 	cryptPassword := utils.CryptPassword(Adduser.Password)
-	err = gormdb.Begin().Error
+	// tx := i.db.Begin()
+	// if tx.Error != nil {
+	// 	return tx.Error
+	// }
+	accountuser, err := i.referrance.AddUser(Adduser.UserName, *cryptPassword, Adduser.Email)
 	if err != nil {
 		return err
 	}
-	err = i.referrance.AddtUserGormdb(Adduser.UserID, *cryptPassword)
-	if err != nil {
-		return err
+	if accountuser != nil {
+		if accountuser.UserName == Adduser.UserName {
+			RegisterUserResponse := &modelR.RegisterUserResponse{
+				Code: 1,
+				Msg:  "user name exists",
+			}
+			return context.JSON(http.StatusOK, RegisterUserResponse)
+		} else {
+			RegisterUserResponse := &modelR.RegisterUserResponse{
+				Code: 2,
+				Msg:  "email exists",
+			}
+			return context.JSON(http.StatusOK, RegisterUserResponse)
+		}
 	}
-	err = gormdb.Commit().Error
-	if err != nil {
-		return err
+	// err = i.db.Commit(tx)
+	// if err != nil {
+	// 	return err
+	// }
+	RegisterUserResponse := &modelR.RegisterUserResponse{
+		Code: 0,
+		Msg:  "success",
 	}
-	return context.String(http.StatusOK, "susscess")
+	return context.JSON(http.StatusOK, RegisterUserResponse)
 }
 
 // GetLogout godoc
 // @Summary GetLogout
 // @Description GetLogout
-// @Tags MonggoDB
+// @Tags gormDB
 // @Accept json
 // @Produce json
 // @Param Content-Type header string true "application/json" default(application/json)
@@ -152,8 +163,8 @@ func (i *Interactor) AddUserGormdb(context echo.Context) error {
 // @Param Authorization header string true "Authorization"
 // @Success 200 {object} string
 // @Failure 400 {object} error
-// @Router /logout [get]
-func (i *Interactor) GetLogout(context echo.Context) error {
+// @Router 	/logout [get]
+func (i *Interactor) Logout(context echo.Context) error {
 	InforLog.PrintLog(fmt.Sprintf("GetLogout start"))
 
 	authercations := context.Request().Header.Get("Authorization")
