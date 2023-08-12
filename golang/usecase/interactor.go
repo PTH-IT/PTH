@@ -51,8 +51,7 @@ func (i *Interactor) Login(context echo.Context) error {
 		return context.String(http.StatusBadRequest, "no user")
 	}
 
-	result, err := i.referrance.GetUser(user.UserName, *utils.CryptPassword(user.Pa
-		ssword))
+	result, err := i.referrance.GetUser(user.UserName, *utils.CryptPassword(user.Password))
 	if err != nil {
 		return err
 	}
