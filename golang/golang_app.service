@@ -1,0 +1,16 @@
+[Unit]
+Description=Service for golang_app
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/golang
+Environment=COMPOSE_HTTP_TIMEOUT=600
+ExecStart=/bin/bash -c "docker compose -f docker-compose.yml up"
+ExecStop=/bin/bash -c "docker compose -f docker-compose.yml down"
+StandardOutput=syslog
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
