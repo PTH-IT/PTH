@@ -5,7 +5,7 @@ After=docker.service
 
 [Service]
 Type=oneshot
-WorkingDirectory=/root/golang
+WorkingDirectory=/root/project/PTH/golang
 Environment=COMPOSE_HTTP_TIMEOUT=600
 ExecStart=/bin/bash -c "docker compose -f docker-compose.yml up"
 ExecStop=/bin/bash -c "docker compose -f docker-compose.yml down"
