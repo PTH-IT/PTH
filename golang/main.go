@@ -15,7 +15,7 @@ import (
 // @contact.name API Support
 // @contact.url http://www.swagger.io/support
 // @contact.email haupham404
-// @host localhost:1909
+// @host http://103.195.239.33/:1909
 func main() {
 	InforLog.PrintLog(fmt.Sprintf("af.Run call"))
 	service.Run()
