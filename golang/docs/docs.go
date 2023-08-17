@@ -21,7 +21,45 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/login": {
+        "/gormdb/user": {
+            "get": {
+                "description": "get username from token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "gormDB"
+                ],
+                "summary": "GetUser",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
             "post": {
                 "description": "login username",
                 "consumes": [
@@ -61,7 +99,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/logout": {
+        "/logout": {
             "get": {
                 "description": "GetLogout",
                 "consumes": [
@@ -71,7 +109,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "MonggoDB"
+                    "gormDB"
                 ],
                 "summary": "GetLogout",
                 "parameters": [
@@ -121,7 +159,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/register": {
+        "/register": {
             "post": {
                 "description": "Add new user to database",
                 "consumes": [
@@ -160,54 +198,16 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/gormdb/user": {
-            "get": {
-                "description": "get username from token",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "gormDB"
-                ],
-                "summary": "GetUser",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authorization",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
         "model.Login": {
             "type": "object",
             "properties": {
-                "Password": {
+                "password": {
                     "type": "string"
                 },
-                "UserID": {
+                "user_name": {
                     "type": "string"
                 }
             }
@@ -255,7 +255,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:1909",
+	Host:             "http://103.195.239.33/:1909",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Swagger Example API",

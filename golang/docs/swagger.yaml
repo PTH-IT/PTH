@@ -1,9 +1,9 @@
 definitions:
   model.Login:
     properties:
-      Password:
+      password:
         type: string
-      UserID:
+      user_name:
         type: string
     type: object
   model.RegisterUser:
@@ -30,7 +30,7 @@ definitions:
       type:
         type: string
     type: object
-host: localhost:1909
+host: http://103.195.239.33/:1909
 info:
   contact:
     email: haupham404
@@ -41,7 +41,32 @@ info:
   title: Swagger Example API
   version: "1.0"
 paths:
-  /api/login:
+  /gormdb/user:
+    get:
+      consumes:
+      - application/json
+      description: get username from token
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: GetUser
+      tags:
+      - gormDB
+  /login:
     post:
       consumes:
       - application/json
@@ -67,7 +92,7 @@ paths:
       summary: LoginUser
       tags:
       - gormDB
-  /api/logout:
+  /logout:
     get:
       consumes:
       - application/json
@@ -108,8 +133,8 @@ paths:
           schema: {}
       summary: GetLogout
       tags:
-      - MonggoDB
-  /api/register:
+      - gormDB
+  /register:
     post:
       consumes:
       - application/json
@@ -133,31 +158,6 @@ paths:
           schema:
             type: string
       summary: AddUser
-      tags:
-      - gormDB
-  /gormdb/user:
-    get:
-      consumes:
-      - application/json
-      description: get username from token
-      parameters:
-      - description: Authorization
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-      summary: GetUser
       tags:
       - gormDB
 swagger: "2.0"
