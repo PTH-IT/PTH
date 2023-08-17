@@ -30,7 +30,7 @@ definitions:
       type:
         type: string
     type: object
-host: http://103.195.239.33/:1909
+host: 103.195.239.33/:1909
 info:
   contact:
     email: haupham404
