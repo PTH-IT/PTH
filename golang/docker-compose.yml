@@ -1,12 +1,12 @@
 version: '3'
 services:
-  db:
-    image:  postgres:latest
-    environment:
-      - "POSTGRES_USER=${DB_USER}"
-      - "POSTGRES_PASSWORD=${DB_PASSWORD}"
-    ports:
-      - "5432:5432" 
+  # db:
+  #   image:  postgres:latest
+  #   environment:
+  #     - "POSTGRES_USER=${DB_USER}"
+  #     - "POSTGRES_PASSWORD=${DB_PASSWORD}"
+  #   ports:
+  #     - "5432:5432" 
   web:
     build: .
     ports:
@@ -14,10 +14,10 @@ services:
     volumes:
       - ".:/app"
     depends_on:
-      - db
+      # - db
       - redis
-    links:
-      - "db:database"   
+    # links:
+    #   - "db:database"   
   redis:
     image: "redis:latest"
     ports:
