@@ -31,3 +31,10 @@ func AppV1Logout(api commonhandler) echo.HandlerFunc {
 	}
 
 }
+func AppV1VerifyToken(api commonhandler) echo.HandlerFunc {
+
+	return func(context echo.Context) error {
+		return api.Interactor.VerifyToken(context)
+	}
+
+}

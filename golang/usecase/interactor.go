@@ -3,6 +3,7 @@ package usecase
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"Golang/adapter/gormdb"
 	"Golang/domain/model"
@@ -59,12 +60,12 @@ func (i *Interactor) Login(context echo.Context) error {
 		return context.String(http.StatusBadRequest, "user no exist")
 	}
 
-	tokenString := utils.GenerateToken(result.UserName)
+	tokenString := utils.GenerateToken(strconv.Itoa(int(result.ID)))
 	token := &modelR.Token{
 		Authorization: tokenString,
 		Type:          "bearer",
 	}
-	err = utils.SetToken(tokenString, user.UserName)
+	err = utils.SetToken(tokenString, strconv.Itoa(int(result.ID)))
 	if err != nil {
 		return err
 	}
@@ -82,10 +83,10 @@ func (i *Interactor) Login(context echo.Context) error {
 // @Success 200 {object} string
 // @Failure 400 {object} string
 // @Router /gormdb/user [get]
-func (i *Interactor) GetUser(context echo.Context) error {
+func (i *Interactor) VerifyToken(context echo.Context) error {
 	InforLog.PrintLog(fmt.Sprintf("GetUserGormdb start"))
 
-	authercations := context.Request().Header.Get("token")
+	authercations := context.Request().Header.Get("Authorization")
 	user := utils.ParseToken(authercations)
 	userID := user.Claims.(jwt.MapClaims)["userID"].(string)
 	if !utils.GetToken(authercations, userID) {
