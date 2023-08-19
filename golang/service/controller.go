@@ -57,6 +57,7 @@ func Run() {
 	e.POST("/login", AppV1Login(api))
 	e.POST("/register", AppV1Register(api))
 	g := e.Group("/api")
+	g.POST("/verifytoken", AppV1VerifyToken(api))
 	g.POST("/logout", AppV1Logout(api))
 	g.POST("/addinformation", AppV1Logout(api))
 	g.POST("/editinformation", AppV1Logout(api))
